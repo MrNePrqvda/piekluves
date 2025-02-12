@@ -1,0 +1,233 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Configuration;
+using System.Data.SqlClient;
+using System.IO;
+using System.Drawing.Imaging;
+
+namespace piekluves
+{
+    public partial class Form1 : Form
+    {
+        private SqlConnection sqlConnection = null;
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            sqlConnection = new SqlConnection(ConfigurationManager.
+                ConnectionStrings["piekluves"].ConnectionString);
+            sqlConnection.Open();
+            if (sqlConnection.State == ConnectionState.Open)
+            {
+                MessageBox.Show("Connect IR");
+            }
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btninsertklienti_Click(object sender, EventArgs e)
+        {
+            SqlCommand command = new SqlCommand($"INSERT INTO [Klienti] (Name, Surname, Phone, E_pasts, Dz_datums, pers_kods, brau_pieredze) VALUES (@Name, @Surname, @Phone, @E_pasts, @Dz_datums, @pers_kods, @brau_pieredze)", sqlConnection);
+             command.Parameters.AddWithValue("Name", textBox1.Text);
+            command.Parameters.AddWithValue("Surname", textBox2.Text);
+            command.Parameters.AddWithValue("Phone", textBox3.Text);
+            command.Parameters.AddWithValue("E_pasts", textBox4.Text);
+            command.Parameters.AddWithValue("Dz_datums", dateTimePicker3.Text);
+            command.Parameters.AddWithValue("pers_kods", textBox11.Text);
+            command.Parameters.AddWithValue("brau_pieredze", textBox12.Text);
+            MessageBox.Show(command.ExecuteNonQuery().ToString());
+        }
+        class ImageUploader
+        {
+            private readonly string _connectionString;
+
+            public ImageUploader(string connectionString)
+            {
+                _connectionString = connectionString;
+            }
+
+            public void Upload(PictureBox pictureBox1)
+            {
+                using (var connection = new SqlConnection(_connectionString))
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "INSERT INTO Klienti (pase_id) VALUES (@pase_id)";
+
+                    var image = new Bitmap(pictureBox1.Image);
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        image.Save(memoryStream, ImageFormat.Jpeg);
+                        memoryStream.Position = 0;
+
+                        var sqlParameter = new SqlParameter("@pase_id", SqlDbType.VarBinary, (int)memoryStream.Length)
+                        {
+                            Value = memoryStream.ToArray()
+                        };
+
+                        command.Parameters.Add(sqlParameter);
+                    }
+
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+        class ImageUploader2
+        {
+            private readonly string _connectionString;
+
+            public ImageUploader2(string connectionString)
+            {
+                _connectionString = connectionString;
+            }
+
+            public void Upload(PictureBox pictureBox2)
+            {
+                using (var connection = new SqlConnection(_connectionString))
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "INSERT INTO Klienti (brauk_apl) VALUES (@brauk_apl)";
+
+                    var image = new Bitmap(pictureBox2.Image);
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        image.Save(memoryStream, ImageFormat.Jpeg);
+                        memoryStream.Position = 0;
+
+                        var sqlParameter = new SqlParameter("@brauk_apl", SqlDbType.VarBinary, (int)memoryStream.Length)
+                        {
+                            Value = memoryStream.ToArray()
+                        };
+
+                        command.Parameters.Add(sqlParameter);
+                    }
+
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+
+        private void tabPage1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label10_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnautonoma_Click(object sender, EventArgs e)
+        {
+            SqlCommand command = new SqlCommand($"INSERT INTO [Auto_noma] ( Auto_numurs, Nomas_sakums, Nomas_beigas, Nomas_cena) VALUES ( @Auto_numurs, @Nomas_sakums, @Nomas_beigas, @Nomas_cena)", sqlConnection);
+           // DateTime date = DateTime.Parse(textBox9.Text);
+           // DateTime date2 = DateTime.Parse(textBox10.Text);
+            command.Parameters.AddWithValue("Auto_numurs", textBox8.Text);
+           // command.Parameters.AddWithValue("Nomas_sakums", $"{date.Day}/{date.Month}/{date.Year}");
+           // command.Parameters.AddWithValue("Nomas_beigas", $"{date2.Day}/{date2.Month}/{date2.Year}");
+            command.Parameters.AddWithValue("Nomas_sakums", dateTimePicker1.Text);
+            command.Parameters.AddWithValue("Nomas_beigas", dateTimePicker2.Text);
+            command.Parameters.AddWithValue("Nomas_cena", textBox7.Text);
+            MessageBox.Show(command.ExecuteNonQuery().ToString());
+
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label7_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox11_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label12_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label14_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void checkedListBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            SqlCommand command = new SqlCommand($"INSERT INTO [Auto] (marka, modelis, deg_tips, atrumkarba) VALUES (@marka, @modelis, @deg_tips, @atrumkarba)", sqlConnection);
+            command.Parameters.AddWithValue("marka", comboBox2.Text);
+            command.Parameters.AddWithValue("modelis", textBox13.Text);
+            command.Parameters.AddWithValue("deg_tips", comboBox1.Text);
+            command.Parameters.AddWithValue("atrumkarba", comboBox3.Text);
+            MessageBox.Show(command.ExecuteNonQuery().ToString());
+        }
+
+       private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            using (var openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "Image files (*.jpg, *.jpeg, *.png) | *.jpg; *.jpeg; *.png";
+                openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    pictureBox1.Image = Image.FromFile(openFileDialog.FileName);
+                }
+            }
+        }
+
+        private void btnsavefoto2_Click(object sender, EventArgs e)
+        {
+            using (var openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "Image files (*.jpg, *.jpeg, *.png) | *.jpg; *.jpeg; *.png";
+                openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    pictureBox2.Image = Image.FromFile(openFileDialog.FileName);
+                }
+            }
+        }
+
+        private void pictureBox2_Click(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
